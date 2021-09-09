@@ -3,25 +3,20 @@ package com.example.myapplication.api
 import com.example.myapplication.model.DeepLinkResponse
 import com.example.myapplication.model.StatusModel
 import retrofit2.Response
-import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ServiceApi {
 
-    @GET("v2/top-headlines")
-    suspend fun getBreakingNews(
-        @Query("country")
-        countryCode: String = "us",
-        @Query("page")
-        pageNumber: Int = 1,
-    ): Response<DeepLinkResponse>
+    @POST
+    suspend fun getDeepLink(@Url url: String): Response<DeepLinkResponse>
 
-    @GET("v2/everything")
-    suspend fun searchForNews(
-        @Query("q")
-        searchQuery: String,
-        @Query("page")
-        pageNumber: Int = 1,
+    @POST
+    suspend fun checkStatus(
+        @Query("documentId")
+        documentId: String,
+        @Url url: String,
     ): Response<StatusModel>
 
 }
