@@ -6,47 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
     tools:context=".MainActivity">
 
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="-10dp"
-        android:text="API URL"
-        android:textColorHint="@color/black"
-        android:paddingBottom="20dp"
-        android:textSize="13sp" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/email"
-            android:hint="CHECK URL"
-            android:inputType="textEmailAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="-10dp"
-        android:text="Password"
-        android:textSize="13sp" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/apiurl"
             android:hint="API URL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,7 +33,7 @@
         app:cardCornerRadius="10dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_send"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#1251ff"
@@ -71,10 +41,68 @@
             android:focusable="true"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Enter"
+            android:text="Send"
             android:textColor="@color/white"
             android:textAllCaps="false" />
     </androidx.cardview.widget.CardView>
 
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/response_apiurl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Response API URL"
+        android:textSize="13sp" />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/checkurl"
+            android:hint="CHECK URL"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="4dp"
+        app:cardCornerRadius="10dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_deeplink"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#1251ff"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Deeplink"
+            android:textColor="@color/white"
+            android:textAllCaps="false" />
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/response_deeplink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Response DEEPLINK URL"
+        android:textSize="13sp" />
 
 </LinearLayout>
