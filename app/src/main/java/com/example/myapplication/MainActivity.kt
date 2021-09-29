@@ -1,19 +1,31 @@
 package com.example.myapplication
 import android.content.ContentValues.TAG
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Observer
-
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.util.Resource
 import com.example.myapplication.util.crc32.QRCoder
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainActivityViewModel
+    var progressBar : ProgressBar ?=null
 
-    var btn : AppCompatTextView?=null
+    var btnSend : AppCompatTextView ?= null
+    var btnDeepLink : AppCompatTextView ?= null
+
+    var apiUrl : EditText?=null
+    var checkUrl : EditText?=null
+
+    var responseApiUrl : AppCompatTextView ? =null
+    var responseDeepLinkUrl : AppCompatTextView ? =null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,36 +34,47 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainActivityViewModel::class.java)
 
 
-        btn=findViewById(R.id.btn_send)
-        btn!!.setOnClickListener {
-        viewModel.getDeepLink("")
-        viewModel.checkStatus("","")
-//            val result = QRCoder.make("860b", "D44CD5DC", "B1B3A9E81BA2CFDB34EF7647788F29EECBD7DFEBE77084D0AFC03A76F96FA013");
-//            Log.d("Gosthash", result)
+        btnSend=findViewById(R.id.btn_send)
+        btnDeepLink=findViewById(R.id.btn_deeplink)
+        apiUrl=findViewById(R.id.apiurl)
+        checkUrl=findViewById(R.id.checkurl)
+        responseApiUrl=findViewById(R.id.response_apiurl)
+        responseDeepLinkUrl=findViewById(R.id.response_deeplink)
+        progressBar =findViewById(R.id.progress_bar)
+
+        btnSend!!.setOnClickListener {
+             viewModel.getDeepLink("/eimzo/frontend/auth")
         }
 
-        viewModel.deepLinkResponse.observe(viewLifecycleOwner, Observer {response->
-            when(response) {
+        btnDeepLink!!.setOnClickListener {
+            viewModel.checkStatus("","")
+        }
+
+        viewModel.deepLinkResponse.observe(this, Observer { response ->
+            when (response) {
                 is Resource.Success -> {
-                    //hideProgressBar()
+                    progressBar!!.visibility= View.GONE
                     response.data?.let { responseData ->
                         print("$responseData")
+                        responseApiUrl!!.text = "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
+                        //val result = QRCoder.make(responseData.siteId, responseData.documentId, responseData.challange)
+                        //Log.d("Gosthash", result)
                     }
                 }
                 is Resource.Error -> {
-                    //hideProgressBar()
+                    progressBar!!.visibility= View.GONE
                     response.message?.let { message ->
                         Log.e(TAG, "An error occured: $message")
                     }
                 }
                 is Resource.Loading -> {
-                    //showProgressBar()
+                    progressBar!!.visibility= View.VISIBLE
                 }
             }
         })
 
 
-        viewModel.checkStatusResponse.observe(viewLifecycleOwner, Observer {response->
+        viewModel.checkStatusResponse.observe(this, Observer {response->
             when(response) {
                 is Resource.Success -> {
                     //hideProgressBar()

@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
+
     companion object {
 
         private val retrofit by lazy {
@@ -15,7 +16,7 @@ class ApiClient {
                 .addInterceptor(logging)
                 .build()
             Retrofit.Builder()
-                .baseUrl("BASE_URL")
+                .baseUrl("https://my.soliq.uz/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
