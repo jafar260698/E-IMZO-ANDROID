@@ -11,8 +11,8 @@ import retrofit2.Response
 
 class MainActivityViewModel() : ViewModel() {
 
-    private val deepLinkResponse : MutableLiveData<Resource<DeepLinkResponse>> = MutableLiveData()
-    private val checkStatusResponse : MutableLiveData<Resource<StatusModel>> = MutableLiveData()
+     val deepLinkResponse : MutableLiveData<Resource<DeepLinkResponse>> = MutableLiveData()
+     val checkStatusResponse : MutableLiveData<Resource<StatusModel>> = MutableLiveData()
 
 
     fun getDeepLink(url: String) = viewModelScope.launch {

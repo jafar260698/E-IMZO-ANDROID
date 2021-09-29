@@ -10,7 +10,9 @@ import retrofit2.http.Url
 interface ServiceApi {
 
     @POST
-    suspend fun getDeepLink(@Url url: String): Response<DeepLinkResponse>
+    suspend fun getDeepLink(
+        @Url url: String
+    ): Response<DeepLinkResponse>
 
     @POST
     suspend fun checkStatus(
