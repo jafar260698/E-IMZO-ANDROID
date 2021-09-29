@@ -1,17 +1,20 @@
 package com.example.myapplication
 import android.content.ContentValues.TAG
-import android.opengl.Visibility
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.myapplication.model.DeepLinkResponse
 import com.example.myapplication.util.Resource
 import com.example.myapplication.util.crc32.QRCoder
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewModel: MainActivityViewModel
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     var responseApiUrl : AppCompatTextView ? =null
     var responseDeepLinkUrl : AppCompatTextView ? =null
 
+    var deepLinkResponse : DeepLinkResponse?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,35 +51,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnDeepLink!!.setOnClickListener {
-            viewModel.checkStatus("","")
+            val result = QRCoder.make(
+                deepLinkResponse!!.siteId,
+                deepLinkResponse!!.documentId,
+                deepLinkResponse!!.challange
+            )
+            Log.d("Gosthash", result)
+            //viewModel.checkStatus(deepLinkResponse!!.documentId,"/eimzo/frontend/status?documentId=")
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse("eimzo://sign?qc=$result")
         }
 
         viewModel.deepLinkResponse.observe(this, Observer { response ->
             when (response) {
                 is Resource.Success -> {
-                    progressBar!!.visibility= View.GONE
+                    progressBar!!.visibility = View.GONE
                     response.data?.let { responseData ->
                         print("$responseData")
-                        responseApiUrl!!.text = "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
-                        //val result = QRCoder.make(responseData.siteId, responseData.documentId, responseData.challange)
-                        //Log.d("Gosthash", result)
+                        responseApiUrl!!.text =
+                            "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
+                        deepLinkResponse = responseData
                     }
                 }
                 is Resource.Error -> {
-                    progressBar!!.visibility= View.GONE
+                    progressBar!!.visibility = View.GONE
                     response.message?.let { message ->
                         Log.e(TAG, "An error occured: $message")
                     }
                 }
                 is Resource.Loading -> {
-                    progressBar!!.visibility= View.VISIBLE
+                    progressBar!!.visibility = View.VISIBLE
                 }
             }
         })
 
 
-        viewModel.checkStatusResponse.observe(this, Observer {response->
-            when(response) {
+        viewModel.checkStatusResponse.observe(this, Observer { response ->
+            when (response) {
                 is Resource.Success -> {
                     //hideProgressBar()
                     response.data?.let { responseData ->

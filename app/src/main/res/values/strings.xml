@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="text_deep_link_title">My Application</string>
+
 </resources>
