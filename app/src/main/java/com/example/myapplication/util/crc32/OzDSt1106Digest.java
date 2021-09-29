@@ -1,4 +1,4 @@
-package com.example.myapplication.crc32;
+package com.example.myapplication.util.crc32;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

@@ -1,47 +1,28 @@
 package com.example.myapplication.api
 
-import com.example.myapplication.model.DeepLinkResponse
-import com.example.myapplication.model.StatusModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.POST
-import retrofit2.http.Query
-import retrofit2.http.Url
 
-interface ApiClient {
-
-    @POST
-    suspend fun getDeepLink(@Url url: String): Response<DeepLinkResponse>
-
-    @POST
-    suspend fun checkStatus(
-        @Query("documentId")
-        documentId: String,
-        @Url url: String,
-    ): Response<StatusModel>
-
-
+class ApiClient {
     companion object {
-        var BASE_URL = "https://my.soliq.uz/"
 
-        fun create() : ApiClient {
+        private val retrofit by lazy {
             val logging = HttpLoggingInterceptor()
             logging.setLevel(HttpLoggingInterceptor.Level.BODY)
             val client = OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build()
-
-            val retrofit = Retrofit.Builder()
+            Retrofit.Builder()
+                .baseUrl("BASE_URL")
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(BASE_URL)
                 .client(client)
                 .build()
-            return retrofit.create(ApiClient::class.java)
-
         }
 
+        val api by lazy {
+            retrofit.create(ServiceApi::class.java)
+        }
     }
 }
