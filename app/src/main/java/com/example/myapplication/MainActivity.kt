@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity() {
                 //viewModel.checkStatus(deepLinkResponse!!.documentId,"/eimzo/frontend/status?documentId=")
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse("eimzo://sign?qc=$result")
+                startActivity(intent)
+
             } else {
                 Toast.makeText(this,"CHECK URL bo'sh bo'lishi mumkin emas",Toast.LENGTH_LONG).show()
             }

@@ -13,7 +13,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.MyApplication"
         android:networkSecurityConfig="@xml/network_security_config"
-        tools:targetApi="m">
+        tools:targetApi="n">
         <!-- for http support-->
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
 
