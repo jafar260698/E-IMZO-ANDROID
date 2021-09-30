@@ -20,7 +20,7 @@
             android:hint="API URL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
+            android:inputType="text"
             android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +65,7 @@
         <EditText
             android:id="@+id/checkurl"
             android:hint="CHECK URL"
-            android:inputType="textEmailAddress"
+            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black" />

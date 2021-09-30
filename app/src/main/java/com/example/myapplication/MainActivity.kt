@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Observer
@@ -47,19 +48,28 @@ class MainActivity : AppCompatActivity() {
         progressBar =findViewById(R.id.progress_bar)
 
         btnSend!!.setOnClickListener {
-             viewModel.getDeepLink("/eimzo/frontend/auth")
+             if(apiUrl!!.text.isNotEmpty()){
+                 // url : /eimzo/frontend/auth
+                 viewModel.getDeepLink(apiUrl!!.text.toString())
+             } else {
+                 Toast.makeText(this,"API URL bo'sh bo'lishi mumkin emas",Toast.LENGTH_LONG).show()
+             }
         }
 
         btnDeepLink!!.setOnClickListener {
-            val result = QRCoder.make(
-                deepLinkResponse!!.siteId,
-                deepLinkResponse!!.documentId,
-                deepLinkResponse!!.challange
-            )
-            Log.d("Gosthash", result)
-            //viewModel.checkStatus(deepLinkResponse!!.documentId,"/eimzo/frontend/status?documentId=")
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("eimzo://sign?qc=$result")
+            if(checkUrl!!.text.isNotEmpty()) {
+                val result = QRCoder.make(
+                    deepLinkResponse!!.siteId,
+                    deepLinkResponse!!.documentId,
+                    deepLinkResponse!!.challange
+                )
+                Log.d("Gosthash", result)
+                //viewModel.checkStatus(deepLinkResponse!!.documentId,"/eimzo/frontend/status?documentId=")
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse("eimzo://sign?qc=$result")
+            } else {
+                Toast.makeText(this,"CHECK URL bo'sh bo'lishi mumkin emas",Toast.LENGTH_LONG).show()
+            }
         }
 
         viewModel.deepLinkResponse.observe(this, Observer { response ->
@@ -68,8 +78,7 @@ class MainActivity : AppCompatActivity() {
                     progressBar!!.visibility = View.GONE
                     response.data?.let { responseData ->
                         print("$responseData")
-                        responseApiUrl!!.text =
-                            "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
+                        responseApiUrl!!.text = "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
                         deepLinkResponse = responseData
                     }
                 }
@@ -84,7 +93,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
 
         viewModel.checkStatusResponse.observe(this, Observer { response ->
             when (response) {
