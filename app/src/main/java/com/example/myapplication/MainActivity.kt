@@ -3,6 +3,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -31,28 +32,23 @@ class MainActivity : AppCompatActivity() {
     var responseDeepLinkUrl : AppCompatTextView ? =null
 
     var deepLinkResponse : DeepLinkResponse?=null
+    var successStatus= false
+    var timer=102
+    var customCheckUrl = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val viewModelProviderFactory = ViewModelProviderFactory()
-        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainActivityViewModel::class.java)
 
-
-        btnSend=findViewById(R.id.btn_send)
-        btnDeepLink=findViewById(R.id.btn_deeplink)
-        apiUrl=findViewById(R.id.apiurl)
-        checkUrl=findViewById(R.id.checkurl)
-        responseApiUrl=findViewById(R.id.response_apiurl)
-        responseDeepLinkUrl=findViewById(R.id.response_deeplink)
-        progressBar =findViewById(R.id.progress_bar)
+        initView()
+        subscribe()
 
         btnSend!!.setOnClickListener {
              if(apiUrl!!.text.isNotEmpty()){
-                 // url : /eimzo/frontend/auth
                  viewModel.getDeepLink(apiUrl!!.text.toString())
              } else {
-                 Toast.makeText(this,"API URL bo'sh bo'lishi mumkin emas",Toast.LENGTH_LONG).show()
+                 Toast.makeText(this, "API URL bo'sh bo'lishi mumkin emas", Toast.LENGTH_LONG).show()
              }
         }
 
@@ -63,24 +59,78 @@ class MainActivity : AppCompatActivity() {
                     deepLinkResponse!!.documentId,
                     deepLinkResponse!!.challange
                 )
+                customCheckUrl = checkUrl!!.text.toString()
                 Log.d("Gosthash", result)
-                //viewModel.checkStatus(deepLinkResponse!!.documentId,"/eimzo/frontend/status?documentId=")
+                recursion(timer)
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse("eimzo://sign?qc=$result")
                 startActivity(intent)
-
             } else {
-                Toast.makeText(this,"CHECK URL bo'sh bo'lishi mumkin emas",Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "CHECK URL bo'sh bo'lishi mumkin emas", Toast.LENGTH_LONG).show()
             }
         }
+    }
 
+
+    private fun recursion(i: Int){
+        print("Counter: $i")
+        if (!successStatus) {
+            if (i > 0) {
+                viewModel.checkStatus("$customCheckUrl?documentId=${deepLinkResponse!!.documentId}")
+                val timer = object: CountDownTimer(3000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+                    override fun onFinish() {
+                        timer -= 3
+                        recursion(timer)
+                    }
+                }
+                timer.start()
+            } else {
+                print("Tizimga kirish ma'lumotlari yangilandi. Boshqadan urinib ko'ring")
+                Toast.makeText(
+                    this,
+                    "Tizimga kirish ma'lumotlari yangilandi. Boshqadan urinib ko'ring",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                return
+            }
+        } else {
+            timer = 0
+            print("Muvaffaqiyatli bajarildi");
+            responseDeepLinkUrl!!.text="Muvaffaqiyatli bajarildi";
+            Toast.makeText(this, "Muvaffaqiyatli bo'ldi", Toast.LENGTH_LONG).show()
+
+            // getUserDataByDocumentID();
+            return;
+        }
+    }
+
+    private fun initView() {
+        val viewModelProviderFactory = ViewModelProviderFactory()
+        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(MainActivityViewModel::class.java)
+
+        btnSend=findViewById(R.id.btn_send)
+        btnDeepLink=findViewById(R.id.btn_deeplink)
+        apiUrl=findViewById(R.id.apiurl)
+        checkUrl=findViewById(R.id.checkurl)
+        responseApiUrl=findViewById(R.id.response_apiurl)
+        responseDeepLinkUrl=findViewById(R.id.response_deeplink)
+        progressBar =findViewById(R.id.progress_bar)
+
+    }
+
+    private fun subscribe() {
         viewModel.deepLinkResponse.observe(this, Observer { response ->
             when (response) {
                 is Resource.Success -> {
                     progressBar!!.visibility = View.GONE
                     response.data?.let { responseData ->
                         print("$responseData")
-                        responseApiUrl!!.text = "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
+                        responseApiUrl!!.text =
+                            "DokumentId: ${responseData.documentId} \n SiteID: ${responseData.siteId}\n Challange: ${responseData.challange}";
                         deepLinkResponse = responseData
                     }
                 }
@@ -88,6 +138,7 @@ class MainActivity : AppCompatActivity() {
                     progressBar!!.visibility = View.GONE
                     response.message?.let { message ->
                         Log.e(TAG, "An error occured: $message")
+                        Toast.makeText(this, "An error occured: $message", Toast.LENGTH_LONG).show()
                     }
                 }
                 is Resource.Loading -> {
@@ -99,22 +150,24 @@ class MainActivity : AppCompatActivity() {
         viewModel.checkStatusResponse.observe(this, Observer { response ->
             when (response) {
                 is Resource.Success -> {
-                    //hideProgressBar()
+                    progressBar!!.visibility = View.GONE
                     response.data?.let { responseData ->
-                        print("$responseData")
+                        if (responseData.status == 1) {
+                            successStatus = true
+                        }
                     }
                 }
                 is Resource.Error -> {
-                    //hideProgressBar()
+                    progressBar!!.visibility = View.GONE
                     response.message?.let { message ->
                         Log.e(TAG, "An error occured: $message")
+                        Toast.makeText(this, "An error occured: $message", Toast.LENGTH_LONG).show()
                     }
                 }
                 is Resource.Loading -> {
-                    //showProgressBar()
+                    progressBar!!.visibility = View.VISIBLE
                 }
             }
         })
     }
-
 }

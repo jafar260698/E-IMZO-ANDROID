@@ -21,9 +21,9 @@ class MainActivityViewModel() : ViewModel() {
          deepLinkResponse.postValue(handleDeepLinkResponse(response))
     }
 
-    fun checkStatus(documentId: String, url: String) = viewModelScope.launch {
+    fun checkStatus(url: String) = viewModelScope.launch {
         checkStatusResponse.postValue(Resource.Loading())
-        val response = ApiClient.api.checkStatus(documentId, url)
+        val response = ApiClient.api.checkStatus(url)
         checkStatusResponse.postValue(handleCheckStatus(response))
     }
 

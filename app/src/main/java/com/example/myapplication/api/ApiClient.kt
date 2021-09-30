@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiClient {
+    //  BASE URL o'zlarizni Backend api url ni qo'shish kerak ### https://my.soliq.uz/ o'rniga
 
     companion object {
 

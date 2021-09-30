@@ -16,9 +16,7 @@ interface ServiceApi {
 
     @POST
     suspend fun checkStatus(
-        @Query("documentId")
-        documentId: String,
-        @Url url: String,
+        @Url url: String
     ): Response<StatusModel>
 
 }
